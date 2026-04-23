@@ -1,0 +1,41 @@
+{
+  "success": true,
+  "data": {
+    "summary": {
+      "totalHotspots": 3,
+      "totalRevenue": "12.40",
+      "totalSessions": 19,
+      "averageRating": 4.6
+    },
+    "revenueSeries": [
+      {
+        "date": "2026-04-17",
+        "value": "0.80"
+      },
+      {
+        "date": "2026-04-18",
+        "value": "1.45"
+      },
+      {
+        "date": "2026-04-19",
+        "value": "2.10"
+      },
+      {
+        "date": "2026-04-20",
+        "value": "1.25"
+      },
+      {
+        "date": "2026-04-21",
+        "value": "2.85"
+      },
+      {
+        "date": "2026-04-22",
+        "value": "2.70"
+      },
+      {
+        "date": "2026-04-23",
+        "value": "1.25"
+      }
+    ]
+  }
+}

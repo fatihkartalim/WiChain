@@ -1,0 +1,70 @@
+{
+  "success": true,
+  "data": {
+    "items": [
+      {
+        "id": "1db26958-0dcf-4bdc-b6fd-bde3531c5311",
+        "title": "Kizilay Fiber Share",
+        "description": "Street-level fiber hotspot with stable indoor and outdoor coverage.",
+        "city": "Ankara",
+        "address": "Mesrutiyet Cd. 18, Kizilay",
+        "latitude": 39.9208,
+        "longitude": 32.8541,
+        "downloadSpeed": 240,
+        "uploadSpeed": 45,
+        "pricePerHour": 1.35,
+        "rating": 4.8,
+        "reviewCount": 32,
+        "distanceKm": 0.7,
+        "status": "ACTIVE",
+        "isOnline": true,
+        "ownerId": "ed240f15-f73a-4ddf-b448-0b67044f59c1",
+        "createdAt": "2026-04-22T09:15:00.000Z"
+      },
+      {
+        "id": "73cae148-773e-4823-8336-65f629e67533",
+        "title": "Bahceli Worknet",
+        "description": "Quiet residential hotspot optimized for laptop work and video calls.",
+        "city": "Ankara",
+        "address": "7. Cadde 41, Bahcelievler",
+        "latitude": 39.9285,
+        "longitude": 32.8242,
+        "downloadSpeed": 160,
+        "uploadSpeed": 35,
+        "pricePerHour": 1.1,
+        "rating": 4.5,
+        "reviewCount": 18,
+        "distanceKm": 2.4,
+        "status": "ACTIVE",
+        "isOnline": true,
+        "ownerId": "5bbd47f4-a72a-4c64-bf58-c3c0b59213ba",
+        "createdAt": "2026-04-20T12:30:00.000Z"
+      },
+      {
+        "id": "836de99d-6ffd-41bc-a5d8-dab02e593d82",
+        "title": "Tunali Night WiFi",
+        "description": "Late-hour access point near cafes with high upload capacity.",
+        "city": "Ankara",
+        "address": "Tunali Hilmi Cd. 92, Cankaya",
+        "latitude": 39.9037,
+        "longitude": 32.8622,
+        "downloadSpeed": 310,
+        "uploadSpeed": 80,
+        "pricePerHour": 1.75,
+        "rating": 4.9,
+        "reviewCount": 44,
+        "distanceKm": 3.1,
+        "status": "ACTIVE",
+        "isOnline": true,
+        "ownerId": "bfbdb166-6b4b-4502-bd1c-181d9a2b5a25",
+        "createdAt": "2026-04-19T19:45:00.000Z"
+      }
+    ],
+    "pagination": {
+      "page": 1,
+      "limit": 12,
+      "totalItems": 3,
+      "totalPages": 1
+    }
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "success": true,
+  "data": {
+    "paymentId": "3f610c88-3070-41f9-bcc3-f8b0337f542c",
+    "packageId": "ef6be845-fbb5-437d-9b5a-11c7b19b65aa",
+    "amount": "0.025",
+    "currency": "MON",
+    "chainId": 10143,
+    "contractAddress": "0x1111111111111111111111111111111111111111",
+    "recipientAddress": "0x2222222222222222222222222222222222222222",
+    "paymentStatus": "PENDING",
+    "expiresAt": "2026-04-23T12:30:00.000Z"
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "success": true,
+  "data": {
+    "id": "4cd514bd-5a8c-41aa-9b1e-7a6108034503",
+    "userId": "2c1e7b1a-df9a-4935-a75b-0579bc331c9b",
+    "purchaseId": "af407c0d-b71a-49bc-8e55-91fd9dd0366d",
+    "hotspotId": "1db26958-0dcf-4bdc-b6fd-bde3531c5311",
+    "status": "ACTIVE",
+    "remainingSeconds": 3600,
+    "startedAt": "2026-04-23T12:00:00.000Z",
+    "endsAt": "2026-04-23T13:00:00.000Z"
+  }
+}

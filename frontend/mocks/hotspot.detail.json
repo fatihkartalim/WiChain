@@ -1,0 +1,25 @@
+{
+  "success": true,
+  "data": {
+    "id": "1db26958-0dcf-4bdc-b6fd-bde3531c5311",
+    "title": "Kizilay Fiber Share",
+    "description": "Street-level fiber hotspot with stable indoor and outdoor coverage.",
+    "city": "Ankara",
+    "address": "Mesrutiyet Cd. 18, Kizilay",
+    "latitude": 39.9208,
+    "longitude": 32.8541,
+    "downloadSpeed": 240,
+    "uploadSpeed": 45,
+    "pricePerHour": 1.35,
+    "rating": 4.8,
+    "reviewCount": 32,
+    "status": "ACTIVE",
+    "isOnline": true,
+    "ownerId": "ed240f15-f73a-4ddf-b448-0b67044f59c1",
+    "createdAt": "2026-04-22T09:15:00.000Z",
+    "owner": {
+      "id": "ed240f15-f73a-4ddf-b448-0b67044f59c1",
+      "name": "Aylin Kaya"
+    }
+  }
+}

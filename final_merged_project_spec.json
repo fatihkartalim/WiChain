@@ -1,0 +1,1095 @@
+{
+  "project_name": "depin-wifi-marketplace",
+  "spec_version": "2.0",
+  "language": "en",
+  "goal": "Build a real DePIN-style neighborhood Wi-Fi marketplace where hotspot owners register internet-sharing hotspots, users discover nearby hotspots, purchase access packages through Monad Testnet blockchain payments, start sessions, track remaining time, and rate service quality. Frontend and backend must live in separate folders. Backend must follow layered architecture. Frontend must be able to start before backend completion using this contract as the source of truth.",
+  "delivery_mode": {
+    "frontend_can_start_before_backend": true,
+    "source_of_truth": "This file defines architecture, API contracts, validation, response schemas, business rules, enums, frontend routes, blockchain flow, and mocking rules.",
+    "progress_file": {
+      "enabled": true,
+      "file_name": "progress",
+      "rules": [
+        "Append entries only",
+        "Never delete old entries",
+        "Each entry must include date, completed work, next step, blockers, assumptions",
+        "Preferred format: Date | Done | Next | Issues | Notes"
+      ]
+    }
+  },
+  "root_structure": [
+    "frontend/",
+    "backend/",
+    "README.md",
+    "progress"
+  ],
+  "backend": {
+    "stack": [
+      "Node.js",
+      "TypeScript",
+      "Express.js",
+      "PostgreSQL",
+      "Prisma ORM",
+      "JWT Authentication",
+      "Ethers.js",
+      "Redis (optional for session timers/cache)"
+    ],
+    "architecture": "layered architecture",
+    "base_url": "/api/v1",
+    "headers": {
+      "Content-Type": "application/json",
+      "Authorization": "Bearer <token>"
+    },
+    "layers": {
+      "presentation": [
+        "routes",
+        "controllers",
+        "request validation",
+        "DTO mapping",
+        "middlewares"
+      ],
+      "application": [
+        "services",
+        "use cases",
+        "business orchestration"
+      ],
+      "domain": [
+        "entities",
+        "interfaces",
+        "business rules",
+        "value objects"
+      ],
+      "infrastructure": [
+        "database",
+        "repositories",
+        "blockchain integrations",
+        "config",
+        "logging"
+      ]
+    },
+    "structure": [
+      "backend/src/presentation",
+      "backend/src/application",
+      "backend/src/domain",
+      "backend/src/infrastructure",
+      "backend/src/shared",
+      "backend/tests"
+    ],
+    "roles": [
+      "USER",
+      "NODE_OWNER",
+      "ADMIN"
+    ],
+    "response_format": {
+      "success": {
+        "success": true,
+        "message": "optional",
+        "data": {}
+      },
+      "error": {
+        "success": false,
+        "message": "Readable error",
+        "code": "VALIDATION_ERROR",
+        "errors": [
+          {
+            "field": "email",
+            "message": "Invalid email"
+          }
+        ]
+      }
+    },
+    "status_codes": {
+      "200": "OK",
+      "201": "Created",
+      "204": "No Content",
+      "400": "Bad Request",
+      "401": "Unauthorized",
+      "403": "Forbidden",
+      "404": "Not Found",
+      "409": "Conflict",
+      "422": "Validation Error",
+      "500": "Internal Server Error"
+    },
+    "enums": {
+      "userRole": [
+        "USER",
+        "NODE_OWNER",
+        "ADMIN"
+      ],
+      "hotspotStatus": [
+        "DRAFT",
+        "ACTIVE",
+        "OFFLINE",
+        "SUSPENDED",
+        "ARCHIVED"
+      ],
+      "paymentStatus": [
+        "PENDING",
+        "CONFIRMED",
+        "FAILED",
+        "EXPIRED"
+      ],
+      "sessionStatus": [
+        "PENDING",
+        "ACTIVE",
+        "ENDED",
+        "EXPIRED"
+      ],
+      "transactionStatus": [
+        "PENDING",
+        "CONFIRMED",
+        "FAILED"
+      ],
+      "sortOptions": [
+        "price",
+        "distance",
+        "rating",
+        "speed",
+        "newest"
+      ]
+    },
+    "entities": {
+      "User": [
+        "id",
+        "name",
+        "email",
+        "passwordHash",
+        "walletAddress",
+        "role",
+        "createdAt",
+        "updatedAt"
+      ],
+      "Hotspot": [
+        "id",
+        "ownerId",
+        "title",
+        "description",
+        "city",
+        "address",
+        "latitude",
+        "longitude",
+        "pricePerHour",
+        "downloadSpeed",
+        "uploadSpeed",
+        "isOnline",
+        "status",
+        "createdAt",
+        "updatedAt",
+        "archivedAt"
+      ],
+      "Package": [
+        "id",
+        "hotspotId",
+        "name",
+        "durationMinutes",
+        "priceUsd",
+        "priceNativeToken",
+        "maxDevices",
+        "isActive",
+        "createdAt",
+        "updatedAt"
+      ],
+      "Purchase": [
+        "id",
+        "userId",
+        "packageId",
+        "txHash",
+        "paymentStatus",
+        "expiresAt",
+        "createdAt",
+        "updatedAt"
+      ],
+      "Session": [
+        "id",
+        "userId",
+        "purchaseId",
+        "hotspotId",
+        "startedAt",
+        "endedAt",
+        "remainingSeconds",
+        "status",
+        "createdAt",
+        "updatedAt"
+      ],
+      "Transaction": [
+        "id",
+        "userId",
+        "hotspotOwnerId",
+        "amount",
+        "tokenSymbol",
+        "network",
+        "txHash",
+        "status",
+        "createdAt"
+      ],
+      "Rating": [
+        "id",
+        "userId",
+        "hotspotId",
+        "purchaseId",
+        "score",
+        "comment",
+        "createdAt"
+      ]
+    },
+    "validation_rules": {
+      "auth.register": {
+        "name": {
+          "required": true,
+          "min": 2,
+          "max": 80
+        },
+        "email": {
+          "required": true,
+          "format": "email",
+          "max": 120
+        },
+        "password": {
+          "required": true,
+          "min": 8,
+          "max": 64
+        },
+        "role": {
+          "required": true,
+          "enum": [
+            "USER",
+            "NODE_OWNER"
+          ]
+        }
+      },
+      "auth.login": {
+        "email": {
+          "required": true,
+          "format": "email"
+        },
+        "password": {
+          "required": true,
+          "min": 8
+        }
+      },
+      "wallet.connect": {
+        "walletAddress": {
+          "required": true,
+          "format": "evm_address"
+        }
+      },
+      "hotspot.create": {
+        "title": {
+          "required": true,
+          "min": 3,
+          "max": 120
+        },
+        "description": {
+          "required": true,
+          "min": 10,
+          "max": 1000
+        },
+        "city": {
+          "required": true,
+          "min": 2,
+          "max": 80
+        },
+        "address": {
+          "required": true,
+          "min": 5,
+          "max": 250
+        },
+        "latitude": {
+          "required": true,
+          "type": "number"
+        },
+        "longitude": {
+          "required": true,
+          "type": "number"
+        },
+        "downloadSpeed": {
+          "required": true,
+          "type": "number",
+          "min": 1
+        },
+        "uploadSpeed": {
+          "required": true,
+          "type": "number",
+          "min": 1
+        },
+        "pricePerHour": {
+          "required": true,
+          "type": "number",
+          "min": 0
+        },
+        "status": {
+          "required": false,
+          "enum": [
+            "DRAFT",
+            "ACTIVE"
+          ]
+        }
+      },
+      "hotspot.update": {
+        "title": {
+          "required": false,
+          "min": 3,
+          "max": 120
+        },
+        "description": {
+          "required": false,
+          "min": 10,
+          "max": 1000
+        },
+        "city": {
+          "required": false,
+          "min": 2,
+          "max": 80
+        },
+        "address": {
+          "required": false,
+          "min": 5,
+          "max": 250
+        },
+        "latitude": {
+          "required": false,
+          "type": "number"
+        },
+        "longitude": {
+          "required": false,
+          "type": "number"
+        },
+        "downloadSpeed": {
+          "required": false,
+          "type": "number",
+          "min": 1
+        },
+        "uploadSpeed": {
+          "required": false,
+          "type": "number",
+          "min": 1
+        },
+        "pricePerHour": {
+          "required": false,
+          "type": "number",
+          "min": 0
+        },
+        "status": {
+          "required": false,
+          "enum": [
+            "DRAFT",
+            "ACTIVE",
+            "OFFLINE",
+            "SUSPENDED",
+            "ARCHIVED"
+          ]
+        },
+        "isOnline": {
+          "required": false,
+          "type": "boolean"
+        }
+      },
+      "package.create": {
+        "hotspotId": {
+          "required": true,
+          "format": "uuid"
+        },
+        "name": {
+          "required": true,
+          "min": 2,
+          "max": 60
+        },
+        "durationMinutes": {
+          "required": true,
+          "type": "integer",
+          "min": 5
+        },
+        "priceUsd": {
+          "required": false,
+          "type": "string"
+        },
+        "priceNativeToken": {
+          "required": true,
+          "type": "string"
+        },
+        "maxDevices": {
+          "required": true,
+          "type": "integer",
+          "min": 1,
+          "max": 10
+        }
+      },
+      "package.update": {
+        "name": {
+          "required": false,
+          "min": 2,
+          "max": 60
+        },
+        "durationMinutes": {
+          "required": false,
+          "type": "integer",
+          "min": 5
+        },
+        "priceUsd": {
+          "required": false,
+          "type": "string"
+        },
+        "priceNativeToken": {
+          "required": false,
+          "type": "string"
+        },
+        "maxDevices": {
+          "required": false,
+          "type": "integer",
+          "min": 1,
+          "max": 10
+        },
+        "isActive": {
+          "required": false,
+          "type": "boolean"
+        }
+      },
+      "payment.prepare": {
+        "packageId": {
+          "required": true,
+          "format": "uuid"
+        }
+      },
+      "payment.verify": {
+        "packageId": {
+          "required": true,
+          "format": "uuid"
+        },
+        "txHash": {
+          "required": true,
+          "format": "evm_tx_hash"
+        }
+      },
+      "rating.create": {
+        "hotspotId": {
+          "required": true,
+          "format": "uuid"
+        },
+        "purchaseId": {
+          "required": true,
+          "format": "uuid"
+        },
+        "score": {
+          "required": true,
+          "type": "integer",
+          "min": 1,
+          "max": 5
+        },
+        "comment": {
+          "required": false,
+          "max": 500
+        }
+      }
+    },
+    "security": [
+      "bcrypt password hashing",
+      "JWT auth",
+      "Helmet",
+      "CORS",
+      "Rate limiting",
+      "Input validation",
+      "Sanitize malformed requests",
+      "Ownership checks",
+      "Role-based authorization"
+    ],
+    "api_rules": [
+      "RESTful API",
+      "Versioned routes under /api/v1",
+      "Consistent response format",
+      "Centralized error middleware",
+      "Validation middleware",
+      "Swagger/OpenAPI docs"
+    ],
+    "pagination_contract": {
+      "query": {
+        "page": "number >= 1",
+        "limit": "number between 1 and 100"
+      },
+      "response": {
+        "items": [],
+        "pagination": {
+          "page": 1,
+          "limit": 12,
+          "totalItems": 120,
+          "totalPages": 10
+        }
+      }
+    },
+    "list_query_contracts": {
+      "GET /hotspots": {
+        "query": {
+          "page": "number >= 1",
+          "limit": "number 1..100",
+          "search": "optional text",
+          "city": "optional string",
+          "lat": "optional number",
+          "lng": "optional number",
+          "radiusKm": "optional number",
+          "minPrice": "optional number",
+          "maxPrice": "optional number",
+          "minSpeed": "optional number",
+          "status": "optional enum hotspotStatus",
+          "sort": "optional enum sortOptions"
+        }
+      },
+      "GET /ratings": {
+        "query": {
+          "hotspotId": "required uuid",
+          "page": "number >= 1",
+          "limit": "number 1..100"
+        }
+      }
+    },
+    "endpoint_responses": {
+      "POST /auth/register": {
+        "data": {
+          "id": "uuid",
+          "name": "string",
+          "email": "string",
+          "role": "USER",
+          "createdAt": "ISO_DATE"
+        }
+      },
+      "POST /auth/login": {
+        "data": {
+          "accessToken": "jwt",
+          "refreshToken": "jwt_or_placeholder",
+          "user": {
+            "id": "uuid",
+            "name": "string",
+            "email": "string",
+            "role": "USER",
+            "walletAddress": "0x..."
+          }
+        }
+      },
+      "POST /auth/refresh": {
+        "data": {
+          "accessToken": "jwt"
+        }
+      },
+      "GET /auth/me": {
+        "data": {
+          "id": "uuid",
+          "name": "string",
+          "email": "string",
+          "role": "USER",
+          "walletAddress": "0x...",
+          "createdAt": "ISO_DATE"
+        }
+      },
+      "POST /wallet/connect": {
+        "data": {
+          "walletAddress": "0x..."
+        }
+      },
+      "GET /hotspots": {
+        "data": {
+          "items": [
+            {
+              "id": "uuid",
+              "title": "Cafe WiFi",
+              "description": "Fast hotspot",
+              "city": "Ankara",
+              "address": "string",
+              "latitude": 0,
+              "longitude": 0,
+              "downloadSpeed": 100,
+              "uploadSpeed": 20,
+              "pricePerHour": 1.5,
+              "rating": 4.7,
+              "reviewCount": 12,
+              "distanceKm": 1.8,
+              "status": "ACTIVE",
+              "isOnline": true,
+              "ownerId": "uuid",
+              "createdAt": "ISO_DATE"
+            }
+          ],
+          "pagination": {
+            "page": 1,
+            "limit": 12,
+            "totalItems": 1,
+            "totalPages": 1
+          }
+        }
+      },
+      "POST /hotspots": {
+        "data": {
+          "id": "uuid",
+          "ownerId": "uuid",
+          "title": "Cafe WiFi",
+          "status": "DRAFT",
+          "createdAt": "ISO_DATE"
+        }
+      },
+      "GET /hotspots/:id": {
+        "data": {
+          "id": "uuid",
+          "title": "Cafe WiFi",
+          "description": "Fast hotspot",
+          "city": "Ankara",
+          "address": "string",
+          "latitude": 0,
+          "longitude": 0,
+          "downloadSpeed": 100,
+          "uploadSpeed": 20,
+          "pricePerHour": 1.5,
+          "rating": 4.7,
+          "reviewCount": 12,
+          "status": "ACTIVE",
+          "isOnline": true,
+          "owner": {
+            "id": "uuid",
+            "name": "Owner Name"
+          }
+        }
+      },
+      "PATCH /hotspots/:id": {
+        "data": {
+          "id": "uuid",
+          "status": "ACTIVE",
+          "updatedAt": "ISO_DATE"
+        }
+      },
+      "DELETE /hotspots/:id": {
+        "data": {
+          "id": "uuid",
+          "status": "ARCHIVED"
+        }
+      },
+      "GET /hotspots/:id/packages": {
+        "data": [
+          {
+            "id": "uuid",
+            "hotspotId": "uuid",
+            "name": "1 Hour",
+            "durationMinutes": 60,
+            "priceUsd": "1.50",
+            "priceNativeToken": "0.05",
+            "maxDevices": 1,
+            "isActive": true
+          }
+        ]
+      },
+      "POST /packages": {
+        "data": {
+          "id": "uuid",
+          "hotspotId": "uuid",
+          "name": "1 Hour"
+        }
+      },
+      "PATCH /packages/:id": {
+        "data": {
+          "id": "uuid",
+          "isActive": true,
+          "updatedAt": "ISO_DATE"
+        }
+      },
+      "POST /payments/prepare": {
+        "data": {
+          "paymentId": "uuid",
+          "packageId": "uuid",
+          "amount": "0.05",
+          "currency": "MON",
+          "chainId": 10143,
+          "contractAddress": "0x...",
+          "recipientAddress": "0x...",
+          "paymentStatus": "PENDING",
+          "expiresAt": "ISO_DATE"
+        }
+      },
+      "POST /payments/verify": {
+        "data": {
+          "purchaseId": "uuid",
+          "paymentStatus": "CONFIRMED",
+          "txHash": "0x..."
+        }
+      },
+      "POST /sessions/start": {
+        "data": {
+          "id": "uuid",
+          "userId": "uuid",
+          "purchaseId": "uuid",
+          "hotspotId": "uuid",
+          "status": "ACTIVE",
+          "startedAt": "ISO_DATE",
+          "endsAt": "ISO_DATE",
+          "remainingSeconds": 3600
+        }
+      },
+      "POST /sessions/end": {
+        "data": {
+          "id": "uuid",
+          "status": "ENDED",
+          "endedAt": "ISO_DATE",
+          "remainingSeconds": 0
+        }
+      },
+      "GET /sessions/active": {
+        "data": {
+          "id": "uuid",
+          "userId": "uuid",
+          "purchaseId": "uuid",
+          "hotspotId": "uuid",
+          "status": "ACTIVE",
+          "remainingSeconds": 3200,
+          "startedAt": "ISO_DATE",
+          "endsAt": "ISO_DATE"
+        }
+      },
+      "POST /ratings": {
+        "data": {
+          "id": "uuid",
+          "hotspotId": "uuid",
+          "purchaseId": "uuid",
+          "score": 5,
+          "comment": "Great connection",
+          "createdAt": "ISO_DATE"
+        }
+      },
+      "GET /ratings": {
+        "data": {
+          "items": [
+            {
+              "id": "uuid",
+              "userId": "uuid",
+              "score": 5,
+              "comment": "Great connection",
+              "createdAt": "ISO_DATE"
+            }
+          ],
+          "pagination": {
+            "page": 1,
+            "limit": 10,
+            "totalItems": 1,
+            "totalPages": 1
+          }
+        }
+      },
+      "GET /analytics/owner": {
+        "data": {
+          "summary": {
+            "totalHotspots": 3,
+            "totalRevenue": "12.40",
+            "totalSessions": 19,
+            "averageRating": 4.6
+          },
+          "revenueSeries": [
+            {
+              "date": "2026-04-23",
+              "value": "1.25"
+            }
+          ]
+        }
+      },
+      "GET /admin/users": {
+        "data": {
+          "items": [
+            {
+              "id": "uuid",
+              "name": "string",
+              "email": "string",
+              "role": "USER",
+              "createdAt": "ISO_DATE"
+            }
+          ]
+        }
+      },
+      "GET /admin/hotspots": {
+        "data": {
+          "items": [
+            {
+              "id": "uuid",
+              "title": "Cafe WiFi",
+              "status": "ACTIVE",
+              "ownerId": "uuid"
+            }
+          ]
+        }
+      }
+    }
+  },
+  "frontend": {
+    "stack": [
+      "Next.js",
+      "TypeScript",
+      "Tailwind CSS",
+      "React Query",
+      "Axios",
+      "Ethers.js"
+    ],
+    "structure": [
+      "frontend/app",
+      "frontend/components",
+      "frontend/hooks",
+      "frontend/services",
+      "frontend/types",
+      "frontend/lib",
+      "frontend/mocks"
+    ],
+    "pages": [
+      "Landing Page",
+      "Login",
+      "Register",
+      "Dashboard",
+      "Hotspots List",
+      "Hotspot Details",
+      "Checkout Page",
+      "Active Session",
+      "Owner Panel",
+      "Admin Panel",
+      "Profile"
+    ],
+    "route_guards": {
+      "/dashboard": [
+        "USER",
+        "NODE_OWNER",
+        "ADMIN"
+      ],
+      "/owner": [
+        "NODE_OWNER",
+        "ADMIN"
+      ],
+      "/admin": [
+        "ADMIN"
+      ],
+      "/checkout/[packageId]": [
+        "USER",
+        "NODE_OWNER",
+        "ADMIN"
+      ],
+      "/session": [
+        "USER",
+        "NODE_OWNER",
+        "ADMIN"
+      ],
+      "/profile": [
+        "USER",
+        "NODE_OWNER",
+        "ADMIN"
+      ]
+    },
+    "redirect_rules": {
+      "afterLogin.USER": "/dashboard",
+      "afterLogin.NODE_OWNER": "/owner",
+      "afterLogin.ADMIN": "/admin",
+      "unauthorized": "/login",
+      "forbidden": "/"
+    },
+    "query_keys": {
+      "authMe": [
+        "auth",
+        "me"
+      ],
+      "hotspots": [
+        "hotspots",
+        "list"
+      ],
+      "hotspotDetail": [
+        "hotspots",
+        "detail",
+        "id"
+      ],
+      "packages": [
+        "packages",
+        "hotspotId"
+      ],
+      "activeSession": [
+        "sessions",
+        "active"
+      ],
+      "ownerAnalytics": [
+        "analytics",
+        "owner"
+      ],
+      "ratings": [
+        "ratings",
+        "hotspotId"
+      ]
+    },
+    "service_contracts": {
+      "auth.service.ts": [
+        "register",
+        "login",
+        "refresh",
+        "getMe"
+      ],
+      "wallet.service.ts": [
+        "connectWallet"
+      ],
+      "hotspot.service.ts": [
+        "getHotspots",
+        "getHotspotById",
+        "createHotspot",
+        "updateHotspot",
+        "deleteHotspot"
+      ],
+      "package.service.ts": [
+        "getPackagesByHotspot",
+        "createPackage",
+        "updatePackage"
+      ],
+      "payment.service.ts": [
+        "preparePayment",
+        "verifyPayment"
+      ],
+      "session.service.ts": [
+        "startSession",
+        "endSession",
+        "getActiveSession"
+      ],
+      "rating.service.ts": [
+        "createRating",
+        "getRatings"
+      ],
+      "analytics.service.ts": [
+        "getOwnerAnalytics"
+      ],
+      "admin.service.ts": [
+        "getUsers",
+        "getHotspots"
+      ]
+    },
+    "ui_features": [
+      "Modern responsive UI",
+      "Dark mode",
+      "Toast notifications",
+      "Loading states",
+      "Error states",
+      "Empty states",
+      "Map plus list hotspot discovery",
+      "Hotspot cards",
+      "Session countdown timer",
+      "Wallet connect button",
+      "Revenue charts"
+    ],
+    "ui_states": {
+      "required_on_all_async_pages": [
+        "loading",
+        "empty",
+        "error",
+        "success"
+      ],
+      "error_display": {
+        "401": "Please log in",
+        "403": "You do not have access",
+        "404": "Resource not found",
+        "409": "Conflict detected",
+        "422": "Please check form fields",
+        "500": "Something went wrong"
+      }
+    }
+  },
+  "blockchain": {
+    "network": {
+      "name": "Monad Testnet",
+      "chainId": 10143,
+      "currencySymbol": "MON"
+    },
+    "payment_contract": {
+      "required_functions": [
+        "payForPackage(packageId)",
+        "withdrawOwnerBalance()",
+        "getPaymentDetails(txHash)"
+      ],
+      "notes": [
+        "Use Ethers.js for wallet and contract interaction",
+        "Connect MetaMask from frontend",
+        "Deploy a simple payment smart contract on Monad Testnet",
+        "Users pay with native testnet token",
+        "Store txHash in database",
+        "Backend verifies on-chain payment before granting access",
+        "Prevent duplicate payment processing",
+        "Support failed and pending transactions"
+      ]
+    },
+    "frontend_payment_flow": [
+      "User clicks pay",
+      "Frontend requests POST /payments/prepare",
+      "Frontend sends wallet transaction through MetaMask",
+      "Frontend gets txHash",
+      "Frontend calls POST /payments/verify with packageId and txHash",
+      "If confirmed, frontend enables session start"
+    ],
+    "wallet_errors": [
+      "WALLET_NOT_CONNECTED",
+      "WRONG_NETWORK",
+      "USER_REJECTED_TRANSACTION",
+      "INSUFFICIENT_FUNDS",
+      "TX_FAILED"
+    ]
+  },
+  "map_and_location": {
+    "requirements": [
+      "Use Leaflet or Google Maps",
+      "Show hotspot pins",
+      "Use browser geolocation",
+      "Calculate nearby hotspots by coordinates",
+      "Distance formula can use Haversine"
+    ]
+  },
+  "testing": {
+    "required": [
+      "Unit tests for services",
+      "Integration tests for auth and payments",
+      "API tests for hotspot flow",
+      "Session expiration tests",
+      "Validation tests"
+    ]
+  },
+  "devops": {
+    "optional_but_recommended": [
+      "Docker Compose for frontend/backend/db",
+      "Seed script",
+      "ESLint",
+      "Prettier",
+      "GitHub Actions CI"
+    ]
+  },
+  "mocking_for_frontend_now": {
+    "enabled_when_backend_missing": true,
+    "rule": "Mock responses must exactly match success and error contracts and endpoint response schemas in this file.",
+    "mock_files": [
+      "frontend/mocks/auth.register.json",
+      "frontend/mocks/auth.login.json",
+      "frontend/mocks/auth.me.json",
+      "frontend/mocks/hotspots.list.json",
+      "frontend/mocks/hotspot.detail.json",
+      "frontend/mocks/packages.list.json",
+      "frontend/mocks/payment.prepare.json",
+      "frontend/mocks/payment.verify.json",
+      "frontend/mocks/session.active.json",
+      "frontend/mocks/analytics.owner.json",
+      "frontend/mocks/ratings.list.json"
+    ]
+  },
+  "business_rules": [
+    "A user can only have one active session at a time",
+    "A package must be purchased before session start",
+    "A session starts only after confirmed blockchain payment",
+    "When package time expires, session auto-ends",
+    "Only users with completed sessions can leave ratings",
+    "One rating per completed purchase",
+    "Node owners cannot rate their own hotspots",
+    "Inactive, offline, suspended, or archived hotspots cannot start new sessions",
+    "Only hotspot owner or admin can edit hotspot",
+    "Only package owner or admin can edit package",
+    "Archived hotspots remain in history but are hidden from public listing"
+  ],
+  "developer_notes": [
+    "Use Hotspot as the canonical entity name instead of HotspotNode in code exposed to frontend",
+    "All IDs are uuid strings",
+    "All dates are ISO strings",
+    "All money-like blockchain values should be treated as strings in API responses",
+    "Frontend should rely on this contract, not backend implementation details",
+    "Do not block frontend progress for backend completion"
+  ],
+  "codex_execution_notes": [
+    "Generate separate frontend and backend folders",
+    "Follow layered architecture strictly in backend",
+    "Use this JSON as the contract for DTOs, validation, routes, mocks, and frontend services",
+    "After each meaningful milestone append an entry to the progress file",
+    "Return complete runnable source code with README and sample env files"
+  ]
+}

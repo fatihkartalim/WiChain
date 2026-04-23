@@ -1,0 +1,25 @@
+{
+  "success": true,
+  "data": [
+    {
+      "id": "ef6be845-fbb5-437d-9b5a-11c7b19b65aa",
+      "hotspotId": "1db26958-0dcf-4bdc-b6fd-bde3531c5311",
+      "name": "30 Minutes",
+      "durationMinutes": 30,
+      "priceUsd": "0.80",
+      "priceNativeToken": "0.025",
+      "maxDevices": 1,
+      "isActive": true
+    },
+    {
+      "id": "db2da8c3-df26-46d2-8538-a30c8f68d620",
+      "hotspotId": "1db26958-0dcf-4bdc-b6fd-bde3531c5311",
+      "name": "2 Hours",
+      "durationMinutes": 120,
+      "priceUsd": "2.50",
+      "priceNativeToken": "0.075",
+      "maxDevices": 2,
+      "isActive": true
+    }
+  ]
+}

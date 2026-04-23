@@ -1,0 +1,8 @@
+{
+  "success": true,
+  "data": {
+    "purchaseId": "af407c0d-b71a-49bc-8e55-91fd9dd0366d",
+    "paymentStatus": "CONFIRMED",
+    "txHash": "0x8fd134a09f0f4c3d06da54c39cb73bcf0ef7392aa05f3f5263d12841f9e00001"
+  }
+}

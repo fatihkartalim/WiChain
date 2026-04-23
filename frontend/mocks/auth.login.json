@@ -1,0 +1,14 @@
+{
+  "success": true,
+  "data": {
+    "accessToken": "mock-access-token-user",
+    "refreshToken": "mock-refresh-token-user",
+    "user": {
+      "id": "2c1e7b1a-df9a-4935-a75b-0579bc331c9b",
+      "name": "Demo User",
+      "email": "user@depin.test",
+      "role": "USER",
+      "walletAddress": "0x742d35Cc6634C0532925a3b844Bc454e4438f44e"
+    }
+  }
+}

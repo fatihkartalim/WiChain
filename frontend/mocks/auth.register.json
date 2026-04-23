@@ -1,0 +1,10 @@
+{
+  "success": true,
+  "data": {
+    "id": "56f50f89-6456-41df-aa34-779f088d2d2d",
+    "name": "New Member",
+    "email": "member@depin.test",
+    "role": "USER",
+    "createdAt": "2026-04-23T08:00:00.000Z"
+  }
+}

@@ -1,0 +1,31 @@
+{
+  "success": true,
+  "data": {
+    "items": [
+      {
+        "id": "089f14f4-5d9f-4f37-a73a-5834f15a778d",
+        "userId": "2c1e7b1a-df9a-4935-a75b-0579bc331c9b",
+        "hotspotId": "1db26958-0dcf-4bdc-b6fd-bde3531c5311",
+        "purchaseId": "7fa640ce-821a-4289-bb0f-6168d50627f4",
+        "score": 5,
+        "comment": "Stable connection and low latency during a video call.",
+        "createdAt": "2026-04-22T18:30:00.000Z"
+      },
+      {
+        "id": "c22bddbc-25b5-4d68-99a6-107ef441f724",
+        "userId": "89d2aa0f-76e1-482d-9025-ff50abfe59a4",
+        "hotspotId": "1db26958-0dcf-4bdc-b6fd-bde3531c5311",
+        "purchaseId": "39e414bb-7f70-424e-a197-f0d0d7f64c1f",
+        "score": 4,
+        "comment": "Fast download speed with a short slowdown near the end.",
+        "createdAt": "2026-04-21T14:10:00.000Z"
+      }
+    ],
+    "pagination": {
+      "page": 1,
+      "limit": 10,
+      "totalItems": 2,
+      "totalPages": 1
+    }
+  }
+}
